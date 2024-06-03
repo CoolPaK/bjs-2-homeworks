@@ -16,6 +16,23 @@ function solveEquation(a, b, c) {
   }
 }
 
-function calculateTotalMortgage(percent, contribution, amount, countMonths) {
+"use strict";
 
+function calculateTotalMortgage(percent, contribution, amount, countMonths) {
+  // Преобразование процентной ставки из диапазона от 0 до 100 в диапазон от 0 до 1
+  let monthlyInterest = percent / 100 / 12;
+
+  // Расчет тела кредита
+  let loanBody = amount - contribution;
+
+  // Расчет ежемесячного платежа по формуле
+  let monthlyPayment = loanBody * (monthlyInterest + monthlyInterest / ((Math.pow(1 + monthlyInterest, countMonths)) - 1));
+
+  // Подсчет общей суммы платежей
+  let totalPayment = countMonths * monthlyPayment;
+
+  // Округление результата до двух знаков после запятой
+  totalPayment = Math.round(totalPayment * 100) / 100;
+
+  return totalPayment;
 }
