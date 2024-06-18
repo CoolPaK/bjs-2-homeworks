@@ -1,27 +1,27 @@
 ﻿"use strict";
+
 //Задание 1.
 function parseCount(value) {
-    const parsedValue = Number.parseFloat(value);
-
-    if (isNaN(parsedValue)) {
-        throw new Error('Невалидное значение');
+    let parseResult = Number.parseInt(value);
+    if (isNaN(parseResult)) {
+        const divideError = new Error("Невалидное значение");
+        throw divideError;
     }
-
-    return parsedValue;
+    return parseResult;
 }
 
-function validateCount(value) {
+function validateCount(valueTwo) {
     try {
-        return parseCount(value);
-    } catch (error) {
-        return error;
+        return parseCount(valueTwo);
+    } catch (e) {
+        return e;
     }
 }
 
 //Задание 2.
 class Triangle {
     constructor(a, b, c) {
-        if (a + b <= c || a + c <= b || b + c <= a) {
+        if (a + b < c || a + c < b || b + c < a) {
             throw new Error("Треугольник с такими сторонами не существует");
         }
         this.a = a;
