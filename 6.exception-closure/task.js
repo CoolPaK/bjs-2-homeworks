@@ -21,7 +21,7 @@ function validateCount(value) {
 //Задание 2.
 class Triangle {
     constructor(a, b, c) {
-        if (a + b < c || a + c < b || b + c < a) {
+        if (a + b <= c || a + c <= b || b + c <= a) {
             throw new Error("Треугольник с такими сторонами не существует");
         }
         this.a = a;
