@@ -1,60 +1,48 @@
 class AlarmClock {
     constructor() {
         this.alarmCollection = [];
-        this.timerId = null;
+        this.intervalId = null;
     }
 
-    addClock(time, callback, id) {
-        if (!id) {
-            throw new Error("Значение не передано");
+    addClock(time, callback) {
+        if (!time || !callback) {
+            throw new Error('Отсутствуют обязательные аргументы');
+        } else if (this.alarmCollection.find(setup => setup.time === time)) {
+            console.warn('Уже присутствует звонок на это же время');
         }
-
-        if (this.alarmCollection.some((item) => item.id === id)) {
-            console.error("Такой звонок уже задан");
-        } else {
-            this.alarmCollection.push({ id, time, callback });
-        }
+        this.alarmCollection.push({ time, callback, canCall: true });
     }
 
-    removeClock(id) {
-        const lengthBefore = this.alarmCollection.length;
+    removeClock(time) {
         this.alarmCollection = this.alarmCollection.filter(
-            (item) => item.id !== id,
-        );
-        const lengthAfter = this.alarmCollection.length;
-        return lengthBefore > lengthAfter;
+            setup => setup.time !== time)
     }
 
     getCurrentFormattedTime() {
-        return new Date().toLocaleTimeString("en-US", {
-            hour12: false,
-            hour: "2-digit",
-            minute: "2-digit",
-        });
+        return new Date().toLocaleTimeString().slice(0, -3);
     }
 
     start() {
-        if (!this.timerId) {
-            this.timerId = setInterval(() => {
-                const currentTime = this.getCurrentFormattedTime();
-                this.alarmCollection.forEach((item) => {
-                    if (currentTime === item.time) {
-                        item.callback();
-                    }
-                });
-            }, 2000);
+        if (this.intervalId) {
+            return
         }
+        this.intervalId = setInterval(() => {
+            this.alarmCollection.forEach(setup => {
+                if (setup.time === this.getCurrentFormattedTime() && setup.canCall) {
+                    setup.canCall = false;
+                    setup.callback();
+                }
+            })
+        }, 1000);
     }
 
     stop() {
-        clearInterval(this.timerId);
-        this.timerId = null;
+        clearInterval(this.intervalId);
+        this.intervalId = null;
     }
 
-    printAlarms() {
-        this.alarmCollection.forEach((item) =>
-            console.log(`id звонка: ${item.id}, время звонка: ${item.time}`),
-        );
+    resetAllCalls() {
+        this.alarmCollection.forEach(setup => setup.canCall = true);
     }
 
     clearAlarms() {
